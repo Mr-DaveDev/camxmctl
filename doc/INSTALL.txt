@@ -1,0 +1,12 @@
+Install build dependencies:
+
+sudo apt-get install autoconf automake build-essential pkgconf libtool git libmicrohttpd-dev libjson-c-dev
+
+cd ~
+git clone https://github.com/Mr-DaveDev/camxmctl.git
+cd camxmctl
+autoreconf -fiv
+./configure
+make
+
+

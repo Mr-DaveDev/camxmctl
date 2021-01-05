@@ -1,0 +1,20 @@
+This is short(incomplete) list of the to do items:
+
+Web Page
+  Set up input items for each element
+  Organize elements into general, network, tracking, PTZ, etc.
+  Determine if/how page can show h264 video
+  Determine if/how page can play audio
+  Determine if/how page can capture audio and send it
+  Warn for empty passwords
+
+Server commands/functionality:
+  Pan and zoom
+  List all users
+  Change passwords
+  Reboot camera
+  Update configuration parms
+  Change ip addresses between hex/ip formats
+  Read and parse a configuration file.
+
+    

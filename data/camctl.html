@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Camera XM Control</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {margin: 0; padding: 0; }
+    body {
+      padding: 0;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1;
+      color: #606c71;
+      background-color: #159957;
+      background-image: linear-gradient(120deg, #155799, #159957);
+      margin-left:0.5% ;
+      margin-right:0.5% ;
+      width: device-width ;
+    }
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      height: auto;
+    }
+    .page-header {
+      color: #fff;
+      text-align: center;
+      margin-top: 0rem;
+      margin-bottom: 0rem;
+      font-weight: normal;
+    }
+    .page-header h4 {
+      height: 2px;
+      padding: 0;
+      margin: 1rem 0;
+      border: 0;
+    }
+    .main-content {
+      background-color: #000000;
+      text-align: center;
+      margin-top: 0rem;
+      margin-bottom: 0rem;
+      font-weight: normal;
+      font-size: 0.90em;
+    }
+    .header-right{
+      float: right;
+      color: white;
+    }
+    .header-center {
+      text-align: center;
+      color: white;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .navbar {
+      overflow: hidden;
+      background-color: #333;
+      font-family: Arial;
+    }
+    .navbar a {
+      float: left;
+      font-size: 16px;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+    .navbar a:hover, {
+      background-color: darkgray;
+    }
+    input , select  {
+      width: 10%;
+      padding: 5px;
+      margin: 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      height: 50%;
+      font-size: 75%;
+      margin-bottom: 5px;
+    }
+    .frm-input{
+      text-align:center;
+      text-align: center;
+      color: white;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .frm-user {
+      text-align: left;
+      color: white;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .dropdown {
+      float: left;
+      overflow: hidden;
+    }
+    .dropdown .dropbtn {
+      font-size: 16px;
+      border: none;
+      outline: none;
+      color: white;
+      padding: 14px 16px;
+      background-color: inherit;
+      font-family: inherit;
+      margin: 0;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .dropdown-content a {
+      float: none;
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+    }
+    .dropdown-content a:hover {
+      background-color: lightgray;
+    }
+    .dropdown:hover .dropbtn {
+      background-color: darkgray;
+    }
+    .border {
+      border-width: 2px;
+      border-color: white;
+      border-style: solid;
+    }
+  </style>
+</head>
+<body class="body" onload="initform()">
+  <div class="navbar">
+    <div class="dropdown">
+      <button onclick='display_pages()' id="page_drop" class="dropbtn">Setup</button>
+      <div id='page_btn' class="dropdown-content">
+        <a onclick="page_click('01');">General</a>
+        <a onclick="page_click('02');">Network</a>
+        <a onclick="page_click('03');">Tracking</a>
+      </div>
+    </div>
+    <p class="header-right">CamXMCtl 0.0.1</p>
+  </div>
+  <div id="id_header">
+    <h3 id='h3id_cam' data-cam="general" class='header-center'>General</h3>
+  </div>
+
+  <div id="divid_ip">
+    <form  method="post" class="frm-user">
+      <input type="hidden" name="cmdid" value="0001">
+      <label for="lbl_cameraip">Camera IP:</label>
+      <input type="text" name="CameraIP">
+      <label for="lbl_username">username:</label>
+      <input type="text" name="Username">
+      <label for="lbl_password">password:</label>
+      <input type="password" name="Password">
+      <input type="hidden" name="trailer" value="null">
+      <input type="submit" value="Submit">
+      <br><br>
+    </form>
+
+
+    <form  method="post" class="frm-user">
+      <input type="hidden" name="cmdid" value="0002">
+
+      <label for="lbl_serialno">SerialNo:</label>
+      <input type="text" name="Ability.SerialNo.SerialNo">
+
+      <input type="hidden" name="trailer" value="null">
+      <br>
+      <input type="submit" value="Update">
+
+      <br><br>
+    </form>
+
+  </div>
+
+  <script>
+
+    function assign_vals(jsondata) {
+      var myObj = JSON.parse(jsondata);
+      for (jkey in myObj) {
+        if (document.getElementsByName(jkey)[0] != null) {
+          document.getElementsByName(jkey)[0].value = myObj[jkey];
+        } else {
+          console.log("Uncoded " + jkey + " : " + myObj[jkey]);
+        }
+      }
+    }
+
+    function config_load() {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          assign_vals(this.responseText);
+        }
+      };
+      xmlhttp.open("GET", "/config.json", true);
+      xmlhttp.send();
+    }
+
+    function initform(){
+      config_load();
+    }
+
+    function display_pages() {
+      if (document.getElementById('page_btn').style.display == 'block'){
+        document.getElementById('page_btn').style.display = 'none';
+      } else {
+        document.getElementById('page_btn').style.display = 'block';
+      }
+    }
+
+    function page_click(pageid) {
+      /* To do: Revise all these to display the desired section and entries for each */
+      var header = "";
+      if (pageid == "01") {
+        header="<h3 id='h3_page' data-pg='General'  class='header-center' >General</h3>"
+      } else if (pageid == "02") {
+        header="<h3 id='h3_page' data-pg='Network'  class='header-center' >Network</h3>"
+      } else if (pageid == "03") {
+        header="<h3 id='h3_page' data-pg='Tracking'  class='header-center' >Tracking</h3>"
+      } else {
+        header="<h3 id='h3_page' data-pg='General'  class='header-center' >General</h3>"
+      }
+      document.getElementById("id_header").innerHTML = header;
+    }
+
+    document.addEventListener('click', function(event) {
+      const dropPage = document.getElementById('page_drop');
+      if (!dropPage.contains(event.target)) {
+        document.getElementById('page_btn').style.display = 'none';
+      }
+    });
+
+  </script>
+</body>
+</html>
